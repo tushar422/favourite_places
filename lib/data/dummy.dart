@@ -1,0 +1,25 @@
+// import 'package:favourite_places/model/place.dart';
+
+// final dummyPlacesList = [
+//   Place(title: 'New Delhi'),
+//   Place(title: 'Paris'),
+//   Place(title: 'Tokyo'),
+//   Place(title: 'London'),
+//   Place(title: 'Sydney'),
+//   Place(title: 'New York'),
+//   Place(title: 'Rome'),
+//   Place(title: 'Cairo'),
+//   Place(title: 'Moscow'),
+//   Place(title: 'Dubai'),
+//   Place(title: 'Rio de Janeiro'),
+//   Place(title: 'Bangkok'),
+//   Place(title: 'Toronto'),
+//   Place(title: 'Seoul'),
+//   Place(title: 'Berlin'),
+//   Place(title: 'Cape Town'),
+//   Place(title: 'Amsterdam'),
+//   Place(title: 'Istanbul'),
+//   Place(title: 'Singapore'),
+//   Place(title: 'Mumbai'),
+//   Place(title: 'San Francisco'),
+// ];
