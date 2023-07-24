@@ -19,29 +19,33 @@ class _LocationInputState extends State<LocationInput> {
 
   @override
   Widget build(BuildContext context) {
-    Widget content = Center(
-        child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        TextButton.icon(
-          icon: const Icon(Icons.my_location),
-          label: const Text('Add Current Location'),
-          onPressed: () {},
+    Widget content;
+    if (_isFetchingLocation) {
+      content = const Padding(
+        padding: EdgeInsets.symmetric(horizontal: 20),
+        child: Center(
+          child: LinearProgressIndicator(),
         ),
-        const SizedBox(),
-        TextButton.icon(
-          icon: const Icon(Icons.pin_drop),
-          label: const Text('Add Custom Location'),
-          onPressed: () {},
-        ),
-      ],
-    ));
-
-    // return Container(
-    //   height: 250,
-    //   width: double.infinity,
-    //   child: InkWell(onTap: _selectLocation, child: content),
-    // );
+      );
+    } else {
+      content = Center(
+          child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          TextButton.icon(
+            icon: const Icon(Icons.my_location),
+            label: const Text('Add Current Location'),
+            onPressed: _selectLocation,
+          ),
+          const SizedBox(),
+          TextButton.icon(
+            icon: const Icon(Icons.pin_drop),
+            label: const Text('Add Custom Location'),
+            onPressed: () {},
+          ),
+        ],
+      ));
+    }
 
     return DottedBorder(
       dashPattern: const [7, 4],
@@ -53,7 +57,7 @@ class _LocationInputState extends State<LocationInput> {
         width: double.infinity,
         clipBehavior: Clip.hardEdge,
         decoration: BoxDecoration(borderRadius: BorderRadius.circular(20)),
-        child: InkWell(onTap: _selectLocation, child: content),
+        child: content,
       ),
     );
   }
@@ -85,5 +89,9 @@ class _LocationInputState extends State<LocationInput> {
     }
 
     locationData = await location.getLocation();
+    setState(() {
+      _isFetchingLocation = false;
+    });
+    print('${locationData.latitude} ${locationData.longitude}');
   }
 }
