@@ -16,7 +16,7 @@ class NewPlaceScreen extends ConsumerStatefulWidget {
 
 class _NewPlaceScreenState extends ConsumerState<NewPlaceScreen> {
   File? _selectedImage;
-  dynamic _selectedLocation;
+  PlaceLocation? _selectedLocation;
   final _titleController = TextEditingController();
   @override
   Widget build(BuildContext context) {
@@ -28,6 +28,7 @@ class _NewPlaceScreenState extends ConsumerState<NewPlaceScreen> {
         ],
       ),
       body: SingleChildScrollView(
+        
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
@@ -63,20 +64,27 @@ class _NewPlaceScreenState extends ConsumerState<NewPlaceScreen> {
 
   void _addPlace() {
     final title = _titleController.text.trim();
-    if (title.isNotEmpty) {
-      ref.read(placesProvider.notifier).createPlace(
-            Place(
-              title: title,
-              image: _selectedImage,
-            ),
-          );
-    } else {
+    if (title.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text('Please enter a title.'),
         duration: Duration(seconds: 3),
       ));
       return;
+    } 
+    if(_selectedLocation==null) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Please select the location.'),
+        duration: Duration(seconds: 3),
+      ));
+      return;
     }
+    ref.read(placesProvider.notifier).createPlace(
+            Place(
+              title: title,
+              image: _selectedImage,
+              location: _selectedLocation!,
+            ),
+          );
     Navigator.pop(context);
   }
 

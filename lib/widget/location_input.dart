@@ -1,8 +1,11 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:dotted_border/dotted_border.dart';
+import 'package:favourite_places/auth/secrets.dart';
+import 'package:favourite_places/model/place.dart';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:location/location.dart';
 
 class LocationInput extends StatefulWidget {
@@ -10,12 +13,20 @@ class LocationInput extends StatefulWidget {
 
   @override
   State<LocationInput> createState() => _LocationInputState();
-  final void Function(File? image) onSelect;
+  final void Function(PlaceLocation? location) onSelect;
 }
 
 class _LocationInputState extends State<LocationInput> {
   bool _isFetchingLocation = false;
-  Location? _selectedLocation;
+  PlaceLocation? _selectedLocation;
+
+  String get locationImage {
+    final lat = _selectedLocation!.lat;
+    final lng = _selectedLocation!.lng;
+    return 'https://maps.googleapis.com/maps/api/staticmap?center=$lat,$lng'
+        '&zoom=14&size=600x300&maptype=roadmap'
+        '&markers=color:red%7C$lat,$lng&key=$mapsApiKey';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,23 +39,32 @@ class _LocationInputState extends State<LocationInput> {
         ),
       );
     } else {
-      content = Center(
-          child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          TextButton.icon(
-            icon: const Icon(Icons.my_location),
-            label: const Text('Add Current Location'),
-            onPressed: _selectLocation,
-          ),
-          const SizedBox(),
-          TextButton.icon(
-            icon: const Icon(Icons.pin_drop),
-            label: const Text('Add Custom Location'),
-            onPressed: () {},
-          ),
-        ],
-      ));
+      if (_selectedLocation != null) {
+        content = Image.network(
+          _selectedLocation!.locationImage,
+          fit: BoxFit.cover,
+          width: double.infinity,
+          height: double.infinity,
+        );
+      } else {
+        content = Center(
+            child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            TextButton.icon(
+              icon: const Icon(Icons.my_location),
+              label: const Text('Add Current Location'),
+              onPressed: _selectLocation,
+            ),
+            const SizedBox(),
+            TextButton.icon(
+              icon: const Icon(Icons.pin_drop),
+              label: const Text('Add Custom Location'),
+              onPressed: () {},
+            ),
+          ],
+        ));
+      }
     }
 
     return DottedBorder(
@@ -89,9 +109,24 @@ class _LocationInputState extends State<LocationInput> {
     }
 
     locationData = await location.getLocation();
+
+    if (locationData.latitude == null || locationData.longitude == null) return;
+    final url = Uri.parse(
+        'https://maps.googleapis.com/maps/api/geocode/json?latlng=${locationData.latitude},${locationData.longitude}&key=$mapsApiKey');
+    final response = await http.get(url);
+    final data = json.decode(response.body);
+    final address = data['results'][0]['formatted_address'];
+
+    final placeLocation = PlaceLocation(
+      lat: locationData.latitude!,
+      lng: locationData.longitude!,
+      address: address,
+    );
     setState(() {
+      _selectedLocation = placeLocation;
       _isFetchingLocation = false;
     });
-    print('${locationData.latitude} ${locationData.longitude}');
+    widget.onSelect(_selectedLocation);
+    // print(' ');
   }
 }

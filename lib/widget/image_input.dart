@@ -49,7 +49,7 @@ class _ImageInputState extends State<ImageInput> {
           child: Container(
             clipBehavior: Clip.hardEdge,
             decoration: BoxDecoration(borderRadius: BorderRadius.circular(20)),
-            child: Image.file(              
+            child: Image.file(
               _selectedImage!,
               fit: BoxFit.cover,
               width: double.infinity,
