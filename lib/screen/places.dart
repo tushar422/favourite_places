@@ -13,7 +13,14 @@ class PlacesScreen extends ConsumerStatefulWidget {
 }
 
 class _PlacesScreenState extends ConsumerState<PlacesScreen> {
+  late Future<void> _placesFuture;
   List<Place> _placesList = [];
+
+  @override
+  void initState() {
+    _placesFuture = ref.read(placesProvider.notifier).loadPlaces();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +34,32 @@ class _PlacesScreenState extends ConsumerState<PlacesScreen> {
         label: const Text('Add'),
         icon: const Icon(Icons.add),
       ),
-      body: PlacesList(list: _placesList),
+      body: FutureBuilder(
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 35),
+                child: LinearProgressIndicator(),
+              ),
+            );
+          }
+          if (snapshot.hasError) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 35),
+                child: TextButton.icon(
+                  onPressed: () {},
+                  icon: const Icon(Icons.error),
+                  label: const Text('An error occured'),
+                ),
+              ),
+            );
+          }
+          return PlacesList(list: _placesList);
+        },
+        future: _placesFuture,
+      ),
     );
   }
 

@@ -1,4 +1,5 @@
 import 'package:favourite_places/model/place.dart';
+import 'package:favourite_places/screen/map.dart';
 import 'package:flutter/material.dart';
 
 class PlaceDetailsScreen extends StatefulWidget {
@@ -50,9 +51,23 @@ class _PlaceDetailsScreenState extends State<PlaceDetailsScreen> {
                       borderRadius: BorderRadius.circular(20),
                     ),
                     clipBehavior: Clip.hardEdge,
-                    child: Image.network(
-                      widget.place.location.locationImage,
-                      fit: BoxFit.cover,
+                    child: InkWell(
+                      child: Image.network(
+                        widget.place.location.locationImage,
+                        fit: BoxFit.cover,
+                      ),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return MapScreen(
+                                location: widget.place.location,
+                              );
+                            },
+                          ),
+                        );
+                      },
                     ),
                   ),
                   Positioned(

@@ -25,13 +25,38 @@ class PlaceLocation {
 
 class Place {
   Place({
+    id,
     required this.title,
     required this.image,
     required this.location,
-  }) : id = uuid.v4();
+  }) : id = id ?? uuid.v4();
 
   final String id;
   final String title;
   final File? image;
   final PlaceLocation location;
+
+  Map<String, Object?> toMap() {
+    return {
+      'id': id,
+      'title': title,
+      'image': image?.path ?? '',
+      'lat': location.lat,
+      'lng': location.lng,
+      'address': location.address,
+    };
+  }
+
+  factory Place.fromMap(Map<String, dynamic> map) {
+    return Place(
+      id: map['id'],
+      title: map['title'],
+      image: (map['image'] != '') ? File(map['image']) : null,
+      location: PlaceLocation(
+        lat: map['lat'],
+        lng: map['lng'],
+        address: map['address'],
+      ),
+    );
+  }
 }

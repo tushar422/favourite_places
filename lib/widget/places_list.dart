@@ -35,6 +35,14 @@ class PlacesList extends StatelessWidget {
                   color: Theme.of(context).colorScheme.onBackground,
                 ),
           ),
+          subtitle: Text(
+            list[index].location.address,
+            style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                  color: Theme.of(context).colorScheme.onBackground,
+                ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
           onTap: () {
             Navigator.push(
                 context,
